@@ -1,6 +1,7 @@
 #import "../config.typ"
-#import "@preview/cetz:0.2.0"
-#import "@preview/finite:0.3.0": automaton
+#import "@preview/cetz:0.3.1"
+#import "@preview/cetz-plot:0.1.0"
+#import "@preview/finite:0.3.2": automaton
 
 #let chapter_state = state("chapter", "")
 
@@ -24,7 +25,8 @@
     numbering: "1",
     number-align: right + top,
     header: [
-      #chapter_state.display(it => {
+      #context {
+        let it = chapter_state.get()
         if it != "" {
           stack(
             spacing: .5em,
@@ -34,11 +36,12 @@
             line(length: 100%),
           )
         }
-      })
+      }
     ],
     header-ascent: 2em,
     footer: [
-      #counter(page).display(it => {
+      #context {
+        let it = counter(page).get().first()
         if it != 1 {
           stack(
             spacing: .5em,
@@ -50,7 +53,7 @@
             ]
           )
         }
-      })
+      }
     ]
   )
 
@@ -354,7 +357,7 @@
   block(above: 0.2cm, below: 0.2cm, 
     rect(stroke: none, width: 100%, par[
       #align(end, text(size: 0.75em, fill: color.darken(30%))[
-        Билет #ticket-counter.display();.
+        Билет #context ticket-counter.get().first();.
         #name
       ])
 
@@ -383,7 +386,7 @@
 
         #place(dy: width * 0.15, block.with(width: width)(
           align(text(fill: color.darken(30%), weight: "bold")[
-            #text(size: 1.5em, ticket-counter.display())
+            #text(size: 1.5em, context ticket-counter.get().first())
             #move(dy: -1.6em, text(size: 0.5em)[билет])
           ], center)
         ))
@@ -406,11 +409,11 @@
 }
 
 #let subgraph(label: [], domain: (), size: (10, 5), samples: 400, func) = align(center, cetz.canvas({
-    import cetz.plot: *
     import cetz.draw: *
+    import cetz-plot: *
 
-    plot(name: "plot", axis-style: "school-book", size: size, x-tick-step: 1, y-tick-step: 0.1, {
-    add-fill-between(domain: domain, samples: samples, func, (x) => 0)
+    plot.plot(name: "plot", axis-style: "school-book", size: size, x-tick-step: 1, y-tick-step: 0.1, {
+      plot.add-fill-between(domain: domain, samples: samples, func, (x) => 0)
     })
     content(((0,-1), "-|", "plot.south"), label)
 }))

@@ -16,8 +16,8 @@
 
 Все это, по хорошему, надо дописать/доделать/улучшить.
 
-#locate(loc => {
-    let todos = query(selector(<todo-like>), loc)
+#context {
+    let todos = query(selector(<todo-like>))
 
     list(..todos.map(el => {
         link(el.location(), el)
@@ -28,14 +28,14 @@
     if todos.len() == 0 [
         Ура! Долгов нет!
     ]
-})
+}
 
 #if config.enable-ticket-references [
     == Ссылки на билеты <ticket-reference>
 
-    #locate(loc => enum(
+    #context enum(
         numbering: "1.",
-        ..query(selector(<ticket>).before(<tickets-div>), loc)
+        ..query(selector(<ticket>).before(<tickets-div>))
             .sorted(key: ticket-name-label => {
                 counter("ticket").at(ticket-name-label.location()).first()
             }).map(ticket-name-label => {
@@ -44,11 +44,13 @@
                 enum.item(
                     counter("ticket").at(ticket-location).first(),
                     [
-                        #link(ticket-location, ticket-name-label.body)
-                        #box(width: 1fr, repeat[.])
+                        #box(width: 1fr)[
+                            #link(ticket-location, ticket-name-label.body)
+                            #box(width: 1fr, repeat[.])
+                        ]
                         #link(ticket-location)[#ticket-location.page()]
                     ]
                 )
             })
-    ))
+    )
 ]
